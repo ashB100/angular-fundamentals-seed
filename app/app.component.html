@@ -1,0 +1,246 @@
+<div class="app">
+    <button
+        (click)="handleClick()">Change Name</button>
+        <!-- [value]=name is the same as [ngModel]="name"-->
+        <!-- Instead of (input)="handleChange($event)" using 
+            (ngModelChange)="handleChange($event) binds the change to the ngModel"
+            ngModel is taking a property binding
+            ngModelChange is taking an event binding.
+            This is technically one-way data binding which
+            listens to a change via an event. And then we 
+            rebind it. We can actually use a ngModel to create
+            an implicit two-way data binding.
+         -->
+         <!--
+             [(ngModel)]="name", here we have a property
+             binding and inside of that we're listening to
+             an event binding. So, under the hood Angular
+             is essentially going to run all the [ngModel]="name"
+             and (ngModelChange)="handleChange($event)" for you
+         
+             input1 is doing one-way data binding and listening for change
+             input2 is doing two-way data binding.
+
+             Ideally you would do two-way data binding for an 
+             input only or text area for example, rather than 
+             for just components itself because its much easier 
+             to manage your data and the state of your component
+             and a template by using one-way flow and event binding.
+         -->
+
+         <!--
+             Template reference: allows us to create a reference
+             to a particular DOM node accessible anywhere in our 
+             template. 
+          -->
+
+          <!--
+              Understanding the * in *ngIf: 
+              Web components is an entirely new concept to the DOM. 
+              Essentially, web  components has a specification where it
+              has a <template> element.
+              Angular basically sits on top of the web platform meaning,
+              we can use things like shadow dom. So this template
+              allows us to essentially create a particular template that
+              Angular can then use to generate content from.
+
+              What <div *ngIf="name.length > 2">Searching for ... {{name}}</div>
+              is doing is really putting the div inside <template></template>. 
+              The actual check is on the template itself, that is why you won't 
+              see the ngIf in the DOM if you wanted to inspect element
+
+              <template [ngIf]="name.length > 2">
+                  <div>
+                      Searching for... {{name}}
+                  </div>
+              </template>
+
+              So, if you imagine the template is a webcomponent piece of html that
+              could be used as a template elsewhere or it could be used multiple
+              times and the * (aesterix) is just sugar syntax for not having to 
+              type the word template yourself 
+          -->
+
+          <!--
+              *ngFor also expands to a <template> element or a webcomponent:
+
+              <template ngFor let-passenger let-i="index" [ngForOf]="passengers">
+                  <li>
+                      {{ i }}: {{ passenger.fullname }}
+                  </li>
+              </template>
+          -->
+
+          <!--
+              Pipes: are functions that take input and produce output.
+              The input has to be of the format/type the pipe expects.
+              We can chain pipes. 
+              e.g. checkDate | date: 'yMMMd' | uppercase 
+          -->
+
+          <!--
+              Safe navigation operator.
+              For an optional property, if that property doesn't exist we 
+              can use the safe navigation operator to make sure that 
+              Angular doesn't throw an error while its trying 
+              to parse the template.
+
+              We do this simply by adding a ? next to the optional 
+              property in an expression: 
+
+              Children: {{ passenger.children?.length }}
+          -->
+
+          <!-- Component arcitecture: 
+              It is a good idea to understand the difference between a container
+              and a presentational component. You may have heard of them as 
+              stateful and stateless components or smart and dumb components. 
+
+              It is a good idea in Angular to treat our components as containers
+              and presentational components. 
+
+              Lets assume a dom tree with component and child componets. Say we 
+              added a service to this compoent (the parent or container component)
+              to give it some real data from perhaps an api. This makes the component
+              a smart component. The smart component which is the container component
+              essentially contains all of the other components that do not know about 
+              the data, however the smart component can pass the data down to the
+              child components. So this is essentially the difference between a smart
+              and a dumb component or a container and a presentational component. So,
+              typically a container component can communicate with services and it also
+              renders child components. A dumb or a presentational component receive
+              data via an input and they emit data changes via event outputs. 
+          -->
+
+          <!-- One-way data flow in a component driven architecture:
+              It is good to learn how the data should be flowing. So lets assume
+              our service has just made an http request its gone off to our api 
+              and we want to pass that down from our container component down 
+              into the stateless children. We can pass data further
+              down the dom tree to dumb components children.
+
+              Lets assume that our components have now been rendered and the 
+              user makes a change in one of the children dumb components, 
+              e.g. typing in an input box. How do you get the change back up
+              to our container component, so that it could update the service
+              should it need to. We pass the data back up thorugh events. Angular has 
+              event emitter built in. We don't use two-way data binding, we 
+              use one-way data binding, which is essentially one way data flow
+              and we use an event from the child component to tell a parent
+              component that a change has occurred. Each dumb component passing
+              the user change information up to container component emits an
+              event to pass the data up. After this if anything needs to be
+              re-rendered it data will flow down to its components again. 
+
+              Data flows down, Events emit up.
+          -->
+
+          <!-- Modules:
+              In our applications we want to create feature modules.
+              We don't want everything to live on the root module because
+              it will have lots of imports and it becomes hard to use 
+              different modules across different applications. 
+
+              So, the idea is all the logic for a particilar feature, e.g
+              passenger dashboard, should live in its own module. This allows
+              us to then take this module and paste it into another application
+              and it should work without us needing to do anything else. 
+
+              We would have a folder for the feature with its feature-name.module.ts
+              file and subfolders called: components for reusable dumb/stateless 
+              components, models for class interfaces and containers for 
+              containers or smart components.
+          -->
+
+          <!-- View Encapsulation: 
+              Styles are actually encapsulated to a component. 
+          -->
+
+          <!-- onInit Lifecycle Hook:
+            A lifecycle hook is a function that gets called by Angular itself when
+            something happens. 
+
+            ngOnInit - is when the component is initialised. E.g. getting data 
+            for the component dynamically. 
+          -->
+
+          <!-- How to pass data into a component:
+
+          -->
+
+    <!-- One-way binding example with explicit implementation of two-way binding-->
+    <input 
+        type="text"
+        [ngModel]="name"
+        (ngModelChange)="handleChange($event)">
+
+    <!-- Two-way binding example -->
+    <input
+        type="text"
+        [(ngModel)]="name">
+
+    <div>{{ name }}</div>
+
+    <!-- Template ref or template reference example --> 
+    <div>
+        <button (click)="handleClickTemplateRef(username.value)">Get Value (using template ref)</button>
+    
+        <!-- #username tells Angular that I want to setup a ref -->
+        <input type="text" #username>
+        <div>{{ username.value }}</div>
+    </div>
+
+    <!-- ng directives example -->
+    <div>
+        <input type="text"
+            [value]="name2"
+            (input)="handleChangeNoDataBinding($event.target.value)">
+
+        <div *ngIf="name2.length > 2">
+            Searching for... {{ name2 }}
+        </div>
+    </div>
+
+    <!-- List of passengers -->
+    <!--[class.classname]="condition"-->
+    <div>
+        <h3>Airline Passengers</h3>
+        <ul>
+            <li *ngFor="let passenger of passengers; let i = index">
+                <span class="status"
+                    [class.checked-in]="passenger.checkedIn"></span>
+                {{ i }}: {{ passenger.fullname }}
+                <div class="date">
+                    Check in date: 
+                    {{ passenger.checkInDate ? (passenger.checkInDate | date: 'yMMMMd' | uppercase) : 'Not checked in.'  }}
+                </div>
+                <div class="children">
+                    Children: {{ passenger.children?.length }}
+                </div>
+            </li>
+        </ul>
+        <!-- [ngClass] -->
+        <h3>Airline Passengers</h3>
+        <ul>
+            <template ngFor let-passenger let-i="index" [ngForOf]="passengers">
+                  <li>
+                      <span class="status"
+                        [ngClass]="{
+                            'checked-in': passenger.checkedIn,
+                            'checked-out': !passenger.checkedIn
+                        }"></span>
+                      {{ i }}: {{ passenger.fullname }}
+                  </li>
+              </template>
+        </ul>
+        <!-- [style.stylePropertyName]="value"--> 
+        <h3>Airline Passengers</h3>
+        <ul>
+            <li *ngFor="let passenger of passengers; let i = index">
+                <span class="status"
+                    [style.backgroundColor]="passenger.checkedIn ? '#2ecc71' : '#c0392b'"></span>
+                {{ i }}: {{ passenger.fullname }}
+            </li>
+        </ul>
+    </div>
+</div>
