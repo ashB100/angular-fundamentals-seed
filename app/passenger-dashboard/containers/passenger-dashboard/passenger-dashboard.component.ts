@@ -6,37 +6,20 @@ import { Passenger } from "../../models/passenger.interface";
     styleUrls: ["passenger-dashboard.component.scss"], // styles are encapsulated to a component
     template: `
         <div>
-            <passenger-count></passenger-count>
+            <passenger-count [items]="passengers">
+            </passenger-count>
             
-            <passenger-detail></passenger-detail>
-
-            <h3>Airline Passengers</h3>
-            <ul>
-                <li *ngFor="let passenger of passengers; let i = index">
-                    <span class="status"
-                        [ngStyle]="{
-                            'background-color': (passenger.checkedIn ? '#2ecc71' : '#c0392b') 
-                        }"></span>
-                    {{ i }}: {{ passenger.fullname }}
-
-                    <div class="date">
-                        Check in date: 
-                        {{ passenger.checkInDate ? (passenger.checkInDate | date: 'yMMMMd' | uppercase) : 'Not checked in.'  }}
-                    </div>
-                    <div class="children">
-                        Children: {{ passenger.children?.length }}
-                    </div>
-                </li>
-            </ul>
+            <passenger-detail
+                *ngFor="let passenger of passengers;"
+                [detail]="passenger">
+            </passenger-detail>
         </div>
     `
 })
 export class PassengerDashboardComponent implements OnInit {
     passengers: Passenger[];
 
-    constructor() {
-
-    }
+    constructor() {}
 
     ngOnInit() {
         console.log("ngOnInit");
