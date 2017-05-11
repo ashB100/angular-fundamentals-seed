@@ -58,7 +58,10 @@
               So, if you imagine the template is a webcomponent piece of html that
               could be used as a template elsewhere or it could be used multiple
               times and the * (aesterix) is just sugar syntax for not having to 
-              type the word template yourself 
+              type the word template yourself.
+
+              Interesting this is that an *ngIf will actually destroy the DOM nodes
+              and recreate it based on the expression.  
           -->
 
           <!--
@@ -167,6 +170,28 @@
           <!-- How to pass data into a component:
 
           -->
+
+          <!-- How to manipulate data in our local stateless components 
+            When we make a change we notify the parent component.
+            We have a one way dataflow from the parent component to the 
+            child. When data changes on the child how do we notify 
+            the parent component that something has changed?
+
+            We emit an event on data change, eg. 
+             <input type="text"
+                    [value]="detail.fullname"
+                    (input)="onNameChange(name.value)"
+                    #name>
+          
+            We use something called EventEmitter and Output.
+
+            @Input()
+            detail: Passenger;
+
+            @Output()
+            remove: EventEmitter<any> = new EventEmitter();
+          -->
+
 
     <!-- One-way binding example with explicit implementation of two-way binding-->
     <input 
