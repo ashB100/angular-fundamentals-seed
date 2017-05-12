@@ -1,7 +1,6 @@
-// import the NgModule
 import { NgModule } from "@angular/core";
-// CommonModule has the directives like ngIf
-import { CommonModule } from '@angular/common';
+import { CommonModule } from '@angular/common'; // CommonModule has the directives like ngIf
+import { HttpModule } from '@angular/http';
 
 // Containers
 import { PassengerDashboardComponent } from "./containers/passenger-dashboard/passenger-dashboard.component";
@@ -10,7 +9,10 @@ import { PassengerDashboardComponent } from "./containers/passenger-dashboard/pa
 import { PassengerCountComponent } from "./components/passenger-count/passenger-count.component";
 import { PassengerDetailComponent } from "./components/passenger-detail/passenger-detail.component";
 
-// Now we have the @NgModule decorator. Pass in our configuration object.
+// service
+import { PassengerDashboardService } from './passenger-dashboard.service';
+
+// We have the @NgModule decorator. Pass in our configuration object.
 // Declarations: holds all of the components relative to this module.
 // Once we start building our components, all of our components will
 // be added to our declarations.
@@ -26,10 +28,15 @@ import { PassengerDetailComponent } from "./components/passenger-detail/passenge
         PassengerDetailComponent
     ],
     imports: [
-        CommonModule
+        CommonModule,
+        HttpModule  // We're saying our ngModule is importing HttpModule because we 
+                    // need it for our service.
     ],
     exports: [
         PassengerDashboardComponent
+    ],
+    providers: [
+        PassengerDashboardService
     ]
 })
 

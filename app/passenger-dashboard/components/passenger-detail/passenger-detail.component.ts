@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from "@angular/core";
+import { Component, OnChanges, OnInit, Input, Output, EventEmitter } from "@angular/core";
 
 import { Passenger } from "../../models/passenger.interface";
 
@@ -41,9 +41,12 @@ import { Passenger } from "../../models/passenger.interface";
         </div>
     `
 })
-export class PassengerDetailComponent {
+export class PassengerDetailComponent implements OnChanges, OnInit {
     @Input()
     detail: Passenger;
+
+    @Output()
+    edit: EventEmitter<any> = new EventEmitter();
 
     @Output()
     remove: EventEmitter<any> = new EventEmitter();
@@ -51,6 +54,16 @@ export class PassengerDetailComponent {
     editing: boolean = false;
     constructor() {}
 
+    ngOnChanges(changes) {
+        if (changes.detail) {
+            this.detail = Object.assign({}, changes.detail.currentValue);
+        }
+    }
+
+    ngOnInit() {
+        console.log('ngOnInit');
+    }
+    
     onNameChange(value: string) {
         // Update the local state of this component
         // As the elements (input and div) are in an *ngIf 
@@ -60,10 +73,14 @@ export class PassengerDetailComponent {
     }
 
     toggleEdit() {
+        if (this.editing) {
+            this.edit.emit(this.detail);
+        }
+
         this.editing = !this.editing;
     }
 
     onRemove() {
-
+        this.remove.emit(this.detail);
     }
 }

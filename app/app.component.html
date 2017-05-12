@@ -192,6 +192,178 @@
             remove: EventEmitter<any> = new EventEmitter();
           -->
 
+          <!-- ngOnChanges life cycle hook
+            onChanges is extremely important. 
+            when you edit passenger fullname in the local component: passenger-detail
+            you will see the changes in passenger.fullname on the parent. All the 
+            changes are instantly been reflected. This is not strictly abiding
+            by the rules of one-way data flow. The component should have its 
+            own local state and when we click done, we should then update the
+            parent data. This is where we can introduce something called ngOnChanges
+
+            To use ngOnChanges in your stateless/dumb component:
+                * import OnChanges from '@angular/core'
+                * add to the component class definition implements onChanges
+                * add a method ngOnChanges in your class
+
+                ngOnChanges(changes) {
+                    // gives us a changes object as parameter. At
+                    // runtime we will be able to see this object
+                    if (changes.detail) {
+                        this.detail = Object.assign({}, changes.detail.currentValue);
+                    }
+                }
+
+            What we can do to avoid updating our parent when we 
+            start making the changes (editing) in the child component
+            is use the onChanges lifecycle hook to break the binding 
+            between the parent and the child component. This is not
+            an issue related to Angular, this is how JS works in general.
+            If you've created a variable before and tried to update it 
+            elsewhere you'll noticce that the original source of that 
+            variable will change. So this is exactly what is happening
+            because Angular is giving us an array via reference rather
+            than a value. So each time we change the value in our local
+            component its actually changing that initial reference to 
+            the object. 
+
+            ngOnChanges gets called before ngOnInit. So that means that the binding and 
+            the data is actually setup or available on ngOnChanges before the component
+            is initialised. So this allows us to intercept the data binding and make 
+            a clone of it and reassign it back to itself. Why do we do this? Because
+            when you click on edit to edit passenger's name, you can start typing and
+            the passenger name in the parent data won't instantly be updated. The parent
+            data will be updated when you click done when the child emits the edit event. 
+          
+            In summary: we want one-way data flow with local state changes, when 
+            something is ready to change in a child component, it fires an event
+            to the parent, we merge those changes in and any other properties that
+            rely on it when this change is available. 
+
+            You can see how useful one-way data flow is, because we can make changes to
+            things and they do not affect other components in the application until
+            a specific point in time. 
+
+            So, the data flows down and the events flow up. 
+          -->
+
+          <!-- Data Services and Dependency Injection
+            * First thing we need to do is create our own service.
+            * Then import { ServiceClassName } from './file-name' into your module
+            * Add in the @NgModule decorator: 
+            
+            @NgModule({
+                declarations: [],
+                imports: [],
+                exports: [], 
+                providers: [ ServiceClassName ]
+            })
+            export class ModuleName {}
+
+            In Angular a service is something we call a provider. This essentially
+            tells our ngModule that we have these components and one of these 
+            components may rely on this service, so make this service available 
+            to any of the components. This is done through something called
+            Dependency Injection. 
+
+            Dependency Injection:
+
+            constructor(private passengerService: PassengerDashboardService) {}
+     
+            This will allow us to inject the dependency into PassengerDashboardComponent
+            and tell TypeScript that its a private method so we shouldn't be calling
+            it publicly. 
+            
+            The interesting piece is how Angular looks up tokens. We need to 
+            tell Angular what this passengerService is going to be. We've exported
+            a member called PassengerDashboardService in our app so what we need to do 
+            is import it into this component. Now we have a reference to
+            this particular service in our component, then we register it 
+            in the constructor.
+            
+            What Angular will do is use this token to  bind it automatically
+            for you to an internal property called passengerService.
+
+            Essentially all its doing is:
+
+            constructor(private passengerService: PassengerDashboardService) {
+                this.passengerService = passengerService;
+            }
+          -->
+
+          <!-- Understanding @Injectable
+
+          When we rely on a particular provider (service) such as the Http, ie,
+          when we are using and external dependency, we need
+          to import this thing called the Injectable from '@angular/core';
+
+
+          This will tell Angular that it can inject things into its constructor. This
+          allows us to use dependency injection into our other classes:
+
+           import { Injectable } from '@angular/core';
+           import { Http } from '@angular/http';
+
+            @Injectable()
+            export class PassengerDashboardService {
+                constructor(private http: Http) {
+                    // the dependency injection in constructor basically
+                    // does this.http = http;
+
+                    // With the @Injectable now we can access http in our service
+                    console.log(this.http);
+                }
+
+                getPassengers(): Passenger[] {
+                }
+            } 
+          -->
+
+          <!-- Http data fetching with Observables
+
+          // in our data service 
+            import { Observable } from 'rxjs/Observable';
+            import 'rxjs/add/operator/map';
+
+            getPassengers(): Observable<Passenger[]> {
+                return this.http
+                    .get(PASSENGER_API)
+                    .map((response: Response) => {
+                        return response.json();
+                    })
+            }
+
+            // In the component, get data when component is ready
+                ngOnInit() {
+                    this.passengerService
+                        .getPassengers()
+                        .subscribe((data: Passenger[]) => {
+                            this.passengers = data;
+                        });
+                }
+
+            Safe navigation operator: 
+            In the <passenger-count> component which get passengers array and checks 
+            its length, we need to use safe navigation so Angular will wait for that
+            property to be available, once it becones available, the change detection
+            will fire, input will get rebound and the properties will display in the
+            browser:
+
+            <div>
+                Total passengers: {{ checkedInCount() }} / {{ items?.length }}
+            </div>
+          -->
+
+          <!-- Custom Headers and RequestOptions
+            let headers = new Headers({
+                'Content-Type': 'application/json'
+            });
+
+            let options = new RequestOptions({
+                headers: headers
+            });
+          -->
+
 
     <!-- One-way binding example with explicit implementation of two-way binding-->
     <input 

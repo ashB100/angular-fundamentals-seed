@@ -1,5 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 
+import { PassengerDashboardService } from '../../passenger-dashboard.service';
+
 import { Passenger } from "../../models/passenger.interface";
 @Component({
     selector: "passenger-dashboard",
@@ -10,9 +12,20 @@ import { Passenger } from "../../models/passenger.interface";
             </passenger-count>
             //<ng-content select=".count"></ng-content>
             
+            <!-- when you edit passenger fullname in the local component: passenger-detail
+            you will see the changes in passenger.fullname here. All the 
+            changes are instantly been reflected. This is not strictly abiding
+            by the rules of one-way data flow. The component should have its 
+            own local state and when we click done, we should then update the
+            parent data. This is where we can introduce something called ngOnChanges-->
+            <div *ngFor="let passenger of passengers;">
+                {{ passenger.fullname }}
+            </div>
+
             <passenger-detail
                 *ngFor="let passenger of passengers;"
                 [detail]="passenger"
+                (edit)="handleEdit($event)"
                 (remove)="handleRemove($event)">
             </passenger-detail>
         </div>
@@ -21,33 +34,65 @@ import { Passenger } from "../../models/passenger.interface";
 export class PassengerDashboardComponent implements OnInit {
     passengers: Passenger[];
 
-    constructor() {}
+    /* constructor(private passengerService: PassengerDashboardService) {}
 
+    This will allow us to inject the dependency into PassengerDashboardComponent
+     and tell TypeScript that its a private method so we shouldn't be calling
+     it publicly. 
+     
+     The interesting piece is how Angular looks up tokens. We need to 
+     tell Angular what this passengerService is going to be. We've exported
+     a member called PassengerDashboardService in our app so what we need to do 
+     is import it into this component. Now we have a reference to
+     this particular service in our component, then we register it 
+     in the constructor.
+     
+     What Angular will do is use this token to  bind it automatically
+     for you to an internal property called passengerService.
+
+     Essentially all its doing is:
+
+     constructor(private passengerService: PassengerDashboardService) {
+         this.passengerService = passengerService;
+     }
+    */
+    constructor(private passengerService: PassengerDashboardService) {}
+
+    // We want to get the data when the component is ready onInit
     ngOnInit() {
-        console.log("ngOnInit");
+        // This is what we call a synchronous call. This has 
+        // synchronously been bound to this.passengers. 
+        // this.passengers = this.passengerService.getPassengers();
 
-        this.passengers = [{
-            id: 1,
-            fullname: 'Stephen',
-            checkedIn: true,
-            checkInDate: 1490742000000,
-            children: null
-            }, {
-            id: 2,
-            fullname: 'Rose',
-            checkedIn: false,
-            checkInDate: null,
-            children: [{name: 'Emma', age: 10}]
-            }, {
-            id: 3,
-            fullname: 'James',
-            checkedIn: true,
-            checkInDate: 1490742000000,
-            children: [{ name: 'Ted', age: 12}, { name: 'Chloe', age: 7}]
-        }];
+        this.passengerService
+            .getPassengers()
+            .subscribe((data: Passenger[]) => {
+                this.passengers = data;
+            });
     }
 
-    handleRemove(event) {
-        console.log(event);
+    handleEdit(event: Passenger) {
+        this.passengerService
+            .updatePassenger(event)
+            .subscribe((data: Passenger) => {
+                this.passengers = this.passengers
+                .map((passenger: Passenger) => {
+                    if (passenger.id === event.id) {
+                        passenger = Object.assign({}, passenger, event);
+                    }
+
+                    return passenger;
+                });
+            });
+    }
+
+    handleRemove(event: Passenger) {
+        this.passengerService
+            .removePassenger(event)
+            .subscribe((data: Passenger) => {
+                this.passengers = this.passengers.filter((passenger: Passenger) => {
+                    return passenger.id != event.id;
+                });
+            });
     }
 };
