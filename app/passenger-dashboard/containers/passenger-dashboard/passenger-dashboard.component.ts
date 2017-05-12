@@ -68,6 +68,9 @@ export class PassengerDashboardComponent implements OnInit {
             .getPassengers()
             .subscribe((data: Passenger[]) => {
                 this.passengers = data;
+            }, 
+            (error) => {
+                console.log('error', error);
             });
     }
 
