@@ -364,6 +364,32 @@
             });
           -->
 
+          <!-- How to use Observables with error handling.  
+
+            import 'rxjs/add/operator/catch';
+            import 'rxjs/add/observable/throw';
+
+            getPassengers(): Observable<Passenger[]> {
+                return this.http
+                    .get(PASSENGER_API)
+                    .map((response: Response) => {
+                        return response.json();
+                    })
+                    .catch((error: any) => Observable.throw(error.json()));
+            }
+
+            ngOnInit() {
+                this.passengerService
+                    .getPassengers()
+                    .subscribe((data: Passenger[]) => {
+                        this.passengers = data;
+                    }, 
+                    (error) => {
+                        console.log('error', error);
+                    });
+            }
+          -->
+
 
     <!-- One-way binding example with explicit implementation of two-way binding-->
     <input 
