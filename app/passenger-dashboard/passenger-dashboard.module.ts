@@ -1,13 +1,15 @@
 import { NgModule } from "@angular/core";
 import { CommonModule } from '@angular/common'; // CommonModule has the directives like ngIf
 import { HttpModule } from '@angular/http';
+import { FormsModule } from '@angular/forms';
 
 // Containers
 import { PassengerDashboardComponent } from "./containers/passenger-dashboard/passenger-dashboard.component";
-
+import { PassengerViewerComponent } from "./containers/passenger-viewer/passenger-viewer.component";
 // Components
 import { PassengerCountComponent } from "./components/passenger-count/passenger-count.component";
 import { PassengerDetailComponent } from "./components/passenger-detail/passenger-detail.component";
+import { PassengerFormComponent } from "./components/passenger-form/passenger-form.component";
 
 // service
 import { PassengerDashboardService } from './passenger-dashboard.service';
@@ -23,17 +25,22 @@ import { PassengerDashboardService } from './passenger-dashboard.service';
 // parent PassengerDashboardComponent.
 @NgModule({
     declarations: [
+        // containers
         PassengerDashboardComponent,
+        PassengerViewerComponent,
+        // components - we don't need to export these as these are child
+        // components of our exported container component
         PassengerCountComponent,
-        PassengerDetailComponent
+        PassengerDetailComponent,
+        PassengerFormComponent
     ],
     imports: [
         CommonModule,
-        HttpModule  // We're saying our ngModule is importing HttpModule because we 
-                    // need it for our service.
+        HttpModule,  // We're saying our ngModule is importing HttpModule because we need it for our service.
+        FormsModule
     ],
     exports: [
-        PassengerDashboardComponent
+        PassengerViewerComponent
     ],
     providers: [
         PassengerDashboardService
