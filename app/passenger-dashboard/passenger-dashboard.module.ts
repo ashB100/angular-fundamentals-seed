@@ -2,6 +2,7 @@ import { NgModule } from "@angular/core";
 import { CommonModule } from '@angular/common'; // CommonModule has the directives like ngIf
 import { HttpModule } from '@angular/http';
 import { FormsModule } from '@angular/forms';
+import { RouterModule, Routes } from '@angular/router';
 
 // Containers
 import { PassengerDashboardComponent } from "./containers/passenger-dashboard/passenger-dashboard.component";
@@ -13,6 +14,20 @@ import { PassengerFormComponent } from "./components/passenger-form/passenger-fo
 
 // service
 import { PassengerDashboardService } from './passenger-dashboard.service';
+
+/* We need to subscribe to the routeParams so when the location
+changes we can pull in the correct data for our service and
+then render the data for the correct passenger. */
+
+const routes: Routes = [
+    {
+        path: 'passengers',
+        children: [
+            { path: '', component: PassengerDashboardComponent },
+            { path: ':id', component: PassengerViewerComponent }
+        ]
+    }
+]
 
 // We have the @NgModule decorator. Pass in our configuration object.
 // Declarations: holds all of the components relative to this module.
@@ -36,12 +51,18 @@ import { PassengerDashboardService } from './passenger-dashboard.service';
     ],
     imports: [
         CommonModule,
-        HttpModule,  // We're saying our ngModule is importing HttpModule because we need it for our service.
-        FormsModule
+        HttpModule,  // importing HttpModule because we need it for our service.
+        FormsModule,
+        RouterModule.forChild(routes)
     ],
-    exports: [
+    /* Because we're using routing we don't actually need
+    to use exports. They are exported and mereged in 
+    with this routing definition. So everything gets 
+    pulled in to the route module which is why these 
+    are called forChild */
+    /*exports: [
         PassengerViewerComponent
-    ],
+    ], */
     providers: [
         PassengerDashboardService
     ]

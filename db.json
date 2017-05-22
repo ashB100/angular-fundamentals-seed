@@ -1,27 +1,32 @@
 {
-    "passengers": [{
-            "id": 1,
-            "fullname": "Stephen",
-            "checkedIn": true,
-            "checkInDate": 1490742000000,
-            "baggage": ""
-            }, {
-            "id": 2,
-            "fullname": "Rose",
-            "checkedIn": false,
-            "checkInDate": null,
-            "baggage": ""
-            }, {
-            "id": 3,
-            "fullname": "James",
-            "checkedIn": true,
-            "checkInDate": 1490742000000,
-            "baggage": ""
-        }, {
-            "id": 4,
-            "fullname": "Todd",
-            "checkedIn": false,
-            "checkInDate": null,
-            "baggage": ""
-            }]
+  "passengers": [
+    {
+      "fullname": "Stephen Buzz",
+      "id": 1,
+      "checkedIn": true,
+      "baggage": "none",
+      "checkInDate": 1490742000000
+    },
+    {
+      "id": 2,
+      "fullname": "Rose",
+      "checkedIn": false,
+      "checkInDate": null,
+      "baggage": ""
+    },
+    {
+      "id": 3,
+      "fullname": "James",
+      "checkedIn": true,
+      "checkInDate": 1490742000000,
+      "baggage": ""
+    },
+    {
+      "id": 4,
+      "fullname": "Todd",
+      "checkedIn": false,
+      "checkInDate": null,
+      "baggage": ""
+    }
+  ]
 }

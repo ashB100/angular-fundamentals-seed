@@ -1,4 +1,5 @@
 import { Component, OnInit } from "@angular/core";
+import { Router } from '@angular/router';
 
 import { PassengerDashboardService } from '../../passenger-dashboard.service';
 
@@ -10,7 +11,6 @@ import { Passenger } from "../../models/passenger.interface";
         <div>
             <passenger-count [items]="passengers">
             </passenger-count>
-            //<ng-content select=".count"></ng-content>
             
             <!-- when you edit passenger fullname in the local component: passenger-detail
             you will see the changes in passenger.fullname here. All the 
@@ -25,6 +25,7 @@ import { Passenger } from "../../models/passenger.interface";
             <passenger-detail
                 *ngFor="let passenger of passengers;"
                 [detail]="passenger"
+                (view)="handleView($event)"
                 (edit)="handleEdit($event)"
                 (remove)="handleRemove($event)">
             </passenger-detail>
@@ -56,7 +57,10 @@ export class PassengerDashboardComponent implements OnInit {
          this.passengerService = passengerService;
      }
     */
-    constructor(private passengerService: PassengerDashboardService) {}
+    constructor(
+        private router: Router,
+        private passengerService: PassengerDashboardService
+    ) {}
 
     // We want to get the data when the component is ready onInit
     ngOnInit() {
@@ -97,5 +101,14 @@ export class PassengerDashboardComponent implements OnInit {
                     return passenger.id != event.id;
                 });
             });
+    }
+
+    /* We are going to use dynamic imperative routing to allow us
+    to route to particular passengers based on their id.
+    We need to inject our router in the constructor for allow us
+    to do this. 
+    */
+    handleView(event: Passenger) {
+        this.router.navigate(['/passengers', event.id]);
     }
 };
